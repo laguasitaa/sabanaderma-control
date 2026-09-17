@@ -20,8 +20,26 @@ Errores al vincular insumos con pacientes y procedimientos
 ## Qué te cuesta (la causa raíz)
 Insumos usados que no se registran: ni se cobran al paciente ni se descuentan del inventario — el negocio pierde plata sin verlo
 
-## MVP (punto de partida)
-Registrar un paciente, asignarle un procedimiento con sus insumos y precio, y que quede guardado en el historial
+## MVP (alcance final, tras planning)
+Registrar un paciente, asignarle un procedimiento con sus insumos y precio, y que quede guardado en el historial. El MVP se amplió en planning para incluir:
+- **Descuento automático de inventario** al registrar un procedimiento (por cantidad parcial: ml, gramos — no solo unidades completas).
+- **Cálculo automático de honorario médico** por procedimiento (monto fijo por tipo de procedimiento, no porcentaje).
+- Se eligió esto en vez del MVP más chico (solo registro + reporte) porque el dueño sabe que lo va a necesitar pronto y prefiere no reconstruirlo en dos semanas — decisión consciente, documentada en `/office-hours`.
+
+## Usuarios y roles
+- El dueño y su personal (recepción/asistentes) comparten la MISMA base de pacientes — no es información privada por persona, es una sola "clínica" compartida.
+- **Rol dueño**: ve todo, incluyendo honorarios y reportes financieros.
+- **Rol personal**: registra pacientes/procedimientos/insumos, pero NO ve honorarios ni reportes de dinero.
+- Esto significa que el patrón default de RLS de este proyecto (`auth.uid() = user_id`, aislamiento por usuario) NO aplica tal cual — se necesita un modelo de "clínica compartida" + una tabla de honorarios separada con su propia policy restringida a "solo dueño". Detalle completo en el design doc de `/office-hours` y `/plan-eng-review` (`~/.gstack/projects/sabanaderma-control/`).
+
+## Reglas de negocio del inventario y honorarios
+- **Stock insuficiente**: bloquea el registro del procedimiento — no se permite guardar con inventario en negativo.
+- **Editar/borrar un registro guardado**: revierte automáticamente el inventario y recalcula/anula el honorario asociado.
+- **Historial de precios**: cada registro de uso congela el precio y honorario vigentes en ese momento — no se recalcula si después cambia la tarifa del procedimiento.
+- **Concurrencia**: dos personas registrando el mismo insumo al mismo tiempo no deben dejar el stock inconsistente — usar transacción con bloqueo de fila (`SELECT ... FOR UPDATE` en Postgres/Supabase) al descontar inventario.
+
+## Flujo de registro de paciente
+- Al registrar un paciente, buscar primero si ya existe por **nombre Y teléfono** — si existe, ligar el procedimiento nuevo al paciente existente en vez de crear uno duplicado.
 
 ## Guarda información
 Sí — usamos Supabase
