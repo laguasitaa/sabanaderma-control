@@ -12,11 +12,11 @@ export default async function PacientesPage({
 
   let query = supabase
     .from("pacientes")
-    .select("id, nombre, telefono, created_at")
+    .select("id, nombre, telefono, documento, created_at")
     .order("created_at", { ascending: false });
 
   if (q) {
-    query = query.or(`nombre.ilike.%${q}%,telefono.ilike.%${q}%`);
+    query = query.or(`nombre.ilike.%${q}%,telefono.ilike.%${q}%,documento.ilike.%${q}%`);
   }
 
   const { data: pacientes, error } = await query;
@@ -36,7 +36,7 @@ export default async function PacientesPage({
           type="search"
           name="q"
           defaultValue={q ?? ""}
-          placeholder="Buscar por nombre o teléfono"
+          placeholder="Buscar por nombre, teléfono o cédula"
           className="input-default w-full max-w-sm"
         />
       </form>
@@ -50,7 +50,7 @@ export default async function PacientesPage({
           </p>
           <p className="text-muted text-sm mt-1 mb-4">
             {q
-              ? "Prueba con otro nombre o teléfono."
+              ? "Prueba con otro nombre, teléfono o cédula."
               : "Registra al primer paciente para empezar a llevar el historial."}
           </p>
           {!q && (
@@ -73,7 +73,9 @@ export default async function PacientesPage({
             />
             <div className="list-row-main">
               <span className="list-row-title">{p.nombre}</span>
-              <span className="list-row-meta">{p.telefono}</span>
+              <span className="list-row-meta">
+                {p.telefono || (p.documento ? `CC ${p.documento}` : "Sin teléfono")}
+              </span>
             </div>
           </Link>
         ))}

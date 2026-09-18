@@ -10,6 +10,9 @@ type RegistroFila = {
   id: string;
   precio_cobrado: number;
   created_at: string;
+  importado_historico: boolean;
+  procedimiento_texto_historico: string | null;
+  insumos_texto_historico: string | null;
   tipos_procedimiento: { nombre: string } | null;
   doctoras: { nombre: string } | null;
   registros_uso_insumos: { cantidad: number; insumos: { nombre: string; unidad_medida: string } | null }[];
@@ -27,7 +30,7 @@ export default async function DetallePacientePage({
 
   const { data: paciente } = await supabase
     .from("pacientes")
-    .select("id, nombre, telefono")
+    .select("id, nombre, telefono, documento")
     .eq("id", id)
     .single();
 
@@ -36,7 +39,7 @@ export default async function DetallePacientePage({
   const { data: registros } = await supabase
     .from("registros_uso")
     .select(
-      `id, precio_cobrado, created_at,
+      `id, precio_cobrado, created_at, importado_historico, procedimiento_texto_historico, insumos_texto_historico,
        tipos_procedimiento(nombre),
        doctoras(nombre),
        registros_uso_insumos(cantidad, insumos(nombre, unidad_medida)),
@@ -56,7 +59,11 @@ export default async function DetallePacientePage({
       <div className="flex items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-2xl text-default">{paciente.nombre}</h1>
-          <p className="text-muted text-sm">{paciente.telefono}</p>
+          <p className="text-muted text-sm">
+            {[paciente.telefono, paciente.documento ? `CC ${paciente.documento}` : null]
+              .filter(Boolean)
+              .join(" · ") || "Sin teléfono ni cédula"}
+          </p>
         </div>
         <Link href={`/pacientes/${id}/procedimiento/nuevo`} className="btn-primary">
           <Plus size={18} strokeWidth={1.75} aria-hidden="true" />
@@ -85,11 +92,12 @@ export default async function DetallePacientePage({
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="font-semibold text-default">
-                  {r.tipos_procedimiento?.nombre ?? "Procedimiento"}
+                  {r.tipos_procedimiento?.nombre ?? r.procedimiento_texto_historico ?? "Procedimiento"}
                 </p>
                 <p className="text-muted text-sm">
                   {formatFechaCO(r.created_at)}
                   {r.doctoras?.nombre ? ` · ${r.doctoras.nombre}` : ""}
+                  {r.importado_historico ? " · Importado del histórico" : ""}
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -106,6 +114,12 @@ export default async function DetallePacientePage({
                 {r.registros_uso_insumos
                   .map((i) => `${i.insumos?.nombre} (${i.cantidad}${i.insumos?.unidad_medida})`)
                   .join(", ")}
+              </p>
+            )}
+
+            {r.registros_uso_insumos.length === 0 && r.insumos_texto_historico && (
+              <p className="text-muted text-sm mt-2">
+                Insumos (texto original del histórico): {r.insumos_texto_historico}
               </p>
             )}
 

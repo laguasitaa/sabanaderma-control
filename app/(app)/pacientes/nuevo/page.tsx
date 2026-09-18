@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { buscarPosiblesDuplicados, crearPaciente } from "./actions";
 
-type Posible = { id: string; nombre: string; telefono: string };
+type Posible = { id: string; nombre: string; telefono: string | null; documento: string | null };
 
 export default function NuevoPacientePage() {
   const router = useRouter();
@@ -75,7 +75,9 @@ export default function NuevoPacientePage() {
             >
               <div className="list-row-main">
                 <span className="list-row-title">{p.nombre}</span>
-                <span className="list-row-meta">{p.telefono}</span>
+                <span className="list-row-meta">
+                  {p.telefono || (p.documento ? `CC ${p.documento}` : "Sin teléfono")}
+                </span>
               </div>
             </button>
           ))}

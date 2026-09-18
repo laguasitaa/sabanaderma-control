@@ -6,7 +6,7 @@ export async function buscarPosiblesDuplicados(nombre: string, telefono: string)
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("pacientes")
-    .select("id, nombre, telefono")
+    .select("id, nombre, telefono, documento")
     .or(`telefono.eq.${telefono},nombre.ilike.%${nombre}%`)
     .limit(5);
 
