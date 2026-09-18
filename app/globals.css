@@ -382,6 +382,7 @@
   border: 1px solid var(--c-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-2);
+  padding: var(--space-6);
 }
 @utility alert-success { background-color: var(--c-success-bg); color: var(--c-on-success-bg); border-radius: var(--radius-md); }
 @utility alert-warning { background-color: var(--c-warning-bg); color: var(--c-on-warning-bg); border-radius: var(--radius-md); }

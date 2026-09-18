@@ -3,8 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Plus } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getPerfilActual } from "@/lib/data/perfil";
-import { formatCOP, formatFechaCO } from "@/lib/format";
-import { EliminarRegistroBoton } from "./eliminar-boton";
+import { RegistroCard } from "./registro-card";
 
 type RegistroFila = {
   id: string;
@@ -13,6 +12,7 @@ type RegistroFila = {
   importado_historico: boolean;
   procedimiento_texto_historico: string | null;
   insumos_texto_historico: string | null;
+  doctora_id: string | null;
   tipos_procedimiento: { nombre: string } | null;
   doctoras: { nombre: string } | null;
   registros_uso_insumos: { cantidad: number; insumos: { nombre: string; unidad_medida: string } | null }[];
@@ -27,6 +27,7 @@ export default async function DetallePacientePage({
   const { id } = await params;
   const supabase = await createClient();
   const perfil = await getPerfilActual();
+  const esDueno = perfil?.role === "dueno";
 
   const { data: paciente } = await supabase
     .from("pacientes")
@@ -39,7 +40,7 @@ export default async function DetallePacientePage({
   const { data: registros } = await supabase
     .from("registros_uso")
     .select(
-      `id, precio_cobrado, created_at, importado_historico, procedimiento_texto_historico, insumos_texto_historico,
+      `id, precio_cobrado, created_at, importado_historico, procedimiento_texto_historico, insumos_texto_historico, doctora_id,
        tipos_procedimiento(nombre),
        doctoras(nombre),
        registros_uso_insumos(cantidad, insumos(nombre, unidad_medida)),
@@ -48,6 +49,8 @@ export default async function DetallePacientePage({
     .eq("paciente_id", id)
     .order("created_at", { ascending: false })
     .returns<RegistroFila[]>();
+
+  const { data: doctoras } = await supabase.from("doctoras").select("id, nombre").order("nombre");
 
   return (
     <div className="flex flex-col gap-4">
@@ -86,49 +89,30 @@ export default async function DetallePacientePage({
         </div>
       )}
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         {registros?.map((r) => (
-          <div key={r.id} className="card">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="font-semibold text-default">
-                  {r.tipos_procedimiento?.nombre ?? r.procedimiento_texto_historico ?? "Procedimiento"}
-                </p>
-                <p className="text-muted text-sm">
-                  {formatFechaCO(r.created_at)}
-                  {r.doctoras?.nombre ? ` · ${r.doctoras.nombre}` : ""}
-                  {r.importado_historico ? " · Importado del histórico" : ""}
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="num font-semibold text-default">
-                  {formatCOP(r.precio_cobrado)}
-                </span>
-                <EliminarRegistroBoton registroId={r.id} pacienteId={id} />
-              </div>
-            </div>
-
-            {r.registros_uso_insumos.length > 0 && (
-              <p className="text-muted text-sm mt-2">
-                Insumos:{" "}
-                {r.registros_uso_insumos
-                  .map((i) => `${i.insumos?.nombre} (${i.cantidad}${i.insumos?.unidad_medida})`)
-                  .join(", ")}
-              </p>
-            )}
-
-            {r.registros_uso_insumos.length === 0 && r.insumos_texto_historico && (
-              <p className="text-muted text-sm mt-2">
-                Insumos (texto original del histórico): {r.insumos_texto_historico}
-              </p>
-            )}
-
-            {perfil?.role === "dueno" && r.honorarios && (
-              <p className="text-muted text-sm mt-1">
-                Honorario: <span className="num">{formatCOP(r.honorarios.monto)}</span>
-              </p>
-            )}
-          </div>
+          <RegistroCard
+            key={r.id}
+            registroId={r.id}
+            pacienteId={id}
+            titulo={r.tipos_procedimiento?.nombre ?? r.procedimiento_texto_historico ?? "Procedimiento"}
+            fecha={r.created_at}
+            doctoraId={r.doctora_id}
+            doctoraNombre={r.doctoras?.nombre ?? null}
+            importadoHistorico={r.importado_historico}
+            precioCobrado={r.precio_cobrado}
+            insumosEstructurados={
+              r.registros_uso_insumos.length > 0
+                ? r.registros_uso_insumos
+                    .map((i) => `${i.insumos?.nombre} (${i.cantidad}${i.insumos?.unidad_medida})`)
+                    .join(", ")
+                : null
+            }
+            insumosTexto={r.insumos_texto_historico}
+            honorarioMonto={r.honorarios?.monto ?? null}
+            doctoras={doctoras ?? []}
+            esDueno={esDueno}
+          />
         ))}
       </div>
     </div>
