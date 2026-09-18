@@ -5,12 +5,13 @@ import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 import { crearInsumo } from "./actions";
 
-export function NuevoInsumoForm() {
+export function NuevoInsumoForm({ esDueno }: { esDueno: boolean }) {
   const router = useRouter();
   const [abierto, setAbierto] = useState(false);
   const [nombre, setNombre] = useState("");
   const [unidad, setUnidad] = useState("ml");
   const [stock, setStock] = useState("0");
+  const [costo, setCosto] = useState("");
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,9 +29,15 @@ export function NuevoInsumoForm() {
     setError(null);
     setCargando(true);
     try {
-      await crearInsumo(nombre.trim(), unidad, Number(stock));
+      await crearInsumo(
+        nombre.trim(),
+        unidad,
+        Number(stock),
+        esDueno && costo !== "" ? Number(costo) : null,
+      );
       setNombre("");
       setStock("0");
+      setCosto("");
       setAbierto(false);
       router.refresh();
     } catch {
@@ -86,6 +93,24 @@ export function NuevoInsumoForm() {
           />
         </div>
       </div>
+
+      {esDueno && (
+        <div>
+          <label className="label-default block mb-1" htmlFor="costo">
+            Costo de compra por {unidad} (solo tú lo ves)
+          </label>
+          <input
+            id="costo"
+            type="number"
+            min="0"
+            step="0.01"
+            className="input-default w-full"
+            value={costo}
+            onChange={(e) => setCosto(e.target.value)}
+            placeholder="Ej: cuánto pagaste por unidad"
+          />
+        </div>
+      )}
 
       {error && <p className="error-text">{error}</p>}
 
