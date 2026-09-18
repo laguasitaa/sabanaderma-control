@@ -12,7 +12,12 @@ export async function crearInsumo(
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("insumos")
-    .insert({ nombre, unidad_medida: unidadMedida, stock: stockInicial })
+    .insert({
+      nombre,
+      unidad_medida: unidadMedida,
+      stock: stockInicial,
+      stock_inicial: stockInicial,
+    })
     .select("id")
     .single();
 
