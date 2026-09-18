@@ -20,7 +20,7 @@ export default async function NuevoProcedimientoPage({
 
   const { data: tiposProcedimiento } = await supabase
     .from("tipos_procedimiento")
-    .select("id, nombre, precio")
+    .select("id, nombre, codigo, precio")
     .order("nombre");
 
   const { data: insumos } = await supabase

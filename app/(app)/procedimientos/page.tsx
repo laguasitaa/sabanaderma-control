@@ -14,7 +14,7 @@ export default async function ProcedimientosPage() {
   // (rompe el tipado de Supabase).
   const { data: tipos } = await supabase
     .from("tipos_procedimiento")
-    .select("id, nombre, precio, tipos_procedimiento_honorarios(tarifa)")
+    .select("id, nombre, codigo, precio, tipos_procedimiento_honorarios(tarifa)")
     .order("nombre");
 
   return (
@@ -59,7 +59,10 @@ export default async function ProcedimientosPage() {
                 className="text-muted"
               />
               <div className="list-row-main">
-                <span className="list-row-title">{t.nombre}</span>
+                <span className="list-row-title">
+                  {t.nombre}
+                  {t.codigo && <span className="text-muted"> · {t.codigo}</span>}
+                </span>
                 {honorario !== undefined && (
                   <span className="list-row-meta">
                     Honorario: ${honorario.toLocaleString("es-MX")}

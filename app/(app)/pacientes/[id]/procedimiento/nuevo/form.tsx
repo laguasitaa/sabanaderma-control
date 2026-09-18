@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Plus, X } from "lucide-react";
 import { registrarProcedimiento } from "./actions";
 
-type TipoProcedimiento = { id: string; nombre: string; precio: number };
+type TipoProcedimiento = { id: string; nombre: string; codigo: string | null; precio: number };
 type Insumo = { id: string; nombre: string; unidad_medida: string; stock: number };
 type Doctora = { id: string; nombre: string };
 
@@ -93,6 +93,7 @@ export function AsignarProcedimientoForm({
           {tiposProcedimiento.map((t) => (
             <option key={t.id} value={t.id}>
               {t.nombre}
+              {t.codigo ? ` (${t.codigo})` : ""} — ${t.precio.toLocaleString("es-MX")}
             </option>
           ))}
         </select>
