@@ -21,6 +21,8 @@ export function RegistroCard({
   insumosEstructurados,
   insumosTexto,
   honorarioMonto,
+  formaPago,
+  notaSeguimiento,
   doctoras,
   esDueno,
 }: {
@@ -35,6 +37,8 @@ export function RegistroCard({
   insumosEstructurados: string | null;
   insumosTexto: string | null;
   honorarioMonto: number | null;
+  formaPago: string | null;
+  notaSeguimiento: string | null;
   doctoras: Doctora[];
   esDueno: boolean;
 }) {
@@ -47,6 +51,8 @@ export function RegistroCard({
   const [honorarioValor, setHonorarioValor] = useState(
     honorarioMonto !== null ? String(honorarioMonto) : "",
   );
+  const [formaPagoValor, setFormaPagoValor] = useState(formaPago ?? "");
+  const [notaValor, setNotaValor] = useState(notaSeguimiento ?? "");
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -61,6 +67,8 @@ export function RegistroCard({
         precioCobrado: Number(precioValor),
         insumosTexto: insumosValor || null,
         honorarioMonto: esDueno && honorarioValor !== "" ? Number(honorarioValor) : null,
+        formaPago: formaPagoValor || null,
+        notaSeguimiento: notaValor || null,
       });
       setEditando(false);
       router.refresh();
@@ -107,6 +115,12 @@ export function RegistroCard({
         <p className="text-muted text-sm">
           Honorario: <span className="num">{formatCOP(honorarioMonto)}</span>
         </p>
+      )}
+
+      {formaPago && <p className="text-muted text-sm">Forma de pago: {formaPago}</p>}
+
+      {notaSeguimiento && (
+        <p className="text-muted text-sm">Seguimiento: {notaSeguimiento}</p>
       )}
 
       {editando && (
@@ -172,6 +186,39 @@ export function RegistroCard({
               onChange={(e) => setInsumosValor(e.target.value)}
               placeholder="Ej: gorro, gel conductor, algodón…"
             />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label className="label-default block mb-1" htmlFor={`forma-pago-${registroId}`}>
+                Forma de pago
+              </label>
+              <select
+                id={`forma-pago-${registroId}`}
+                className="input-default w-full"
+                value={formaPagoValor}
+                onChange={(e) => setFormaPagoValor(e.target.value)}
+              >
+                <option value="">Sin especificar</option>
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta débito/crédito</option>
+                <option value="Transferencia">Transferencia</option>
+                <option value="Financiamiento">Financiamiento</option>
+                <option value="Pago en línea">Pago en línea</option>
+              </select>
+            </div>
+            <div>
+              <label className="label-default block mb-1" htmlFor={`seguimiento-${registroId}`}>
+                Nota de seguimiento
+              </label>
+              <input
+                id={`seguimiento-${registroId}`}
+                className="input-default w-full"
+                value={notaValor}
+                onChange={(e) => setNotaValor(e.target.value)}
+                placeholder="Ej: revisar en 15 días…"
+              />
+            </div>
           </div>
 
           {esDueno && (

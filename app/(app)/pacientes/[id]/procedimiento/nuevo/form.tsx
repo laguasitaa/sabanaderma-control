@@ -27,6 +27,8 @@ export function AsignarProcedimientoForm({
   const [tipoId, setTipoId] = useState(tiposProcedimiento[0]?.id ?? "");
   const [precio, setPrecio] = useState(String(tiposProcedimiento[0]?.precio ?? ""));
   const [doctoraId, setDoctoraId] = useState(doctoras[0]?.id ?? "");
+  const [formaPago, setFormaPago] = useState("");
+  const [notaSeguimiento, setNotaSeguimiento] = useState("");
   const [filas, setFilas] = useState<FilaInsumo[]>([]);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -65,6 +67,8 @@ export function AsignarProcedimientoForm({
         Number(precio),
         insumosUsados,
         doctoraId || null,
+        formaPago || null,
+        notaSeguimiento || null,
       );
       router.push(`/pacientes/${pacienteId}`);
     } catch (err) {
@@ -132,6 +136,38 @@ export function AsignarProcedimientoForm({
           value={precio}
           onChange={(e) => setPrecio(e.target.value)}
           required
+        />
+      </div>
+
+      <div>
+        <label className="label-default block mb-1" htmlFor="forma-pago">
+          Forma de pago
+        </label>
+        <select
+          id="forma-pago"
+          className="input-default w-full"
+          value={formaPago}
+          onChange={(e) => setFormaPago(e.target.value)}
+        >
+          <option value="">Sin especificar</option>
+          <option value="Efectivo">Efectivo</option>
+          <option value="Tarjeta">Tarjeta débito/crédito</option>
+          <option value="Transferencia">Transferencia</option>
+          <option value="Financiamiento">Financiamiento</option>
+          <option value="Pago en línea">Pago en línea</option>
+        </select>
+      </div>
+
+      <div>
+        <label className="label-default block mb-1" htmlFor="seguimiento">
+          Nota de seguimiento (opcional)
+        </label>
+        <input
+          id="seguimiento"
+          className="input-default w-full"
+          value={notaSeguimiento}
+          onChange={(e) => setNotaSeguimiento(e.target.value)}
+          placeholder="Ej: revisar en 15 días, aplicar crema en la noche…"
         />
       </div>
 

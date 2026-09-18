@@ -13,6 +13,8 @@ type RegistroFila = {
   procedimiento_texto_historico: string | null;
   insumos_texto_historico: string | null;
   doctora_id: string | null;
+  forma_pago: string | null;
+  nota_seguimiento: string | null;
   tipos_procedimiento: { nombre: string } | null;
   doctoras: { nombre: string } | null;
   registros_uso_insumos: { cantidad: number; insumos: { nombre: string; unidad_medida: string } | null }[];
@@ -40,7 +42,7 @@ export default async function DetallePacientePage({
   const { data: registros } = await supabase
     .from("registros_uso")
     .select(
-      `id, precio_cobrado, created_at, importado_historico, procedimiento_texto_historico, insumos_texto_historico, doctora_id,
+      `id, precio_cobrado, created_at, importado_historico, procedimiento_texto_historico, insumos_texto_historico, doctora_id, forma_pago, nota_seguimiento,
        tipos_procedimiento(nombre),
        doctoras(nombre),
        registros_uso_insumos(cantidad, insumos(nombre, unidad_medida)),
@@ -110,6 +112,8 @@ export default async function DetallePacientePage({
             }
             insumosTexto={r.insumos_texto_historico}
             honorarioMonto={r.honorarios?.monto ?? null}
+            formaPago={r.forma_pago}
+            notaSeguimiento={r.nota_seguimiento}
             doctoras={doctoras ?? []}
             esDueno={esDueno}
           />

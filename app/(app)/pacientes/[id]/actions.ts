@@ -21,6 +21,8 @@ export async function actualizarRegistro(
     precioCobrado: number;
     insumosTexto: string | null;
     honorarioMonto: number | null;
+    formaPago: string | null;
+    notaSeguimiento: string | null;
   },
 ) {
   const supabase = await createClient();
@@ -31,6 +33,8 @@ export async function actualizarRegistro(
     p_precio_cobrado: cambios.precioCobrado,
     p_insumos_texto: cambios.insumosTexto,
     p_honorario_monto: cambios.honorarioMonto,
+    p_forma_pago: cambios.formaPago,
+    p_nota_seguimiento: cambios.notaSeguimiento,
   });
   if (error) throw new Error(error.message);
   revalidatePath(`/pacientes/${pacienteId}`);

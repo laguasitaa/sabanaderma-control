@@ -7,6 +7,8 @@ type Fila = {
   precio_cobrado: number;
   importado_historico: boolean;
   procedimiento_texto_historico: string | null;
+  forma_pago: string | null;
+  nota_seguimiento: string | null;
   pacientes: { nombre: string; documento: string | null; telefono: string | null } | null;
   tipos_procedimiento: { nombre: string } | null;
   doctoras: { nombre: string } | null;
@@ -43,7 +45,7 @@ export async function GET() {
     const { data, error } = await supabase
       .from("registros_uso")
       .select(
-        `created_at, precio_cobrado, importado_historico, procedimiento_texto_historico,
+        `created_at, precio_cobrado, importado_historico, procedimiento_texto_historico, forma_pago, nota_seguimiento,
          pacientes(nombre, documento, telefono),
          tipos_procedimiento(nombre),
          doctoras(nombre),
@@ -69,6 +71,8 @@ export async function GET() {
     "Doctora",
     "Precio cobrado (COP)",
     "Honorario (COP)",
+    "Forma de pago",
+    "Nota de seguimiento",
     "Importado del histórico",
   ];
 
@@ -81,6 +85,8 @@ export async function GET() {
     r.doctoras?.nombre ?? "",
     String(r.precio_cobrado),
     r.honorarios ? String(r.honorarios.monto) : "",
+    r.forma_pago ?? "",
+    r.nota_seguimiento ?? "",
     r.importado_historico ? "Sí" : "No",
   ]);
 

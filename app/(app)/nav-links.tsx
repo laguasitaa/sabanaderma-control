@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Users, Package, Stethoscope, Wallet } from "lucide-react";
+import { Users, Package, Stethoscope, Wallet, BarChart3 } from "lucide-react";
 
 const destinos = [
   { href: "/pacientes", label: "Pacientes", icon: Users, soloDueno: false },
   { href: "/insumos", label: "Insumos", icon: Package, soloDueno: false },
   { href: "/procedimientos", label: "Procedimientos", icon: Stethoscope, soloDueno: false },
+  { href: "/indicadores", label: "Indicadores", icon: BarChart3, soloDueno: false },
   { href: "/honorarios", label: "Honorarios", icon: Wallet, soloDueno: true },
 ];
 
