@@ -46,6 +46,7 @@ import { Barlow_Condensed, Raleway } from "next/font/google";
 
 ## Spacing, radii, sombras, motion
 - Spacing: escala 4px (1=4 … 20=80). Padding de card 22-24px, gap de secciones 20-24px.
+- Padding de inputs/selects: 12px vertical, 16px horizontal (`--space-3` / `--space-4`) — más aire que el default original (10/12), para que el texto no toque el borde.
 - Radii: sm 6 / md 10 / lg 16 / full 999.
 - Sombras: solo `--shadow-1` (bordes sutiles) y `--shadow-2` (cards elevadas).
 - Motion: 200ms `cubic-bezier(.2,0,.2,1)` en color/border/opacity/shadow. Nada decorativo.

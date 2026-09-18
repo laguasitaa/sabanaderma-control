@@ -10,6 +10,7 @@ type Fila = {
     precio_cobrado: number;
     pacientes: { nombre: string } | null;
     tipos_procedimiento: { nombre: string } | null;
+    doctoras: { nombre: string } | null;
   } | null;
 };
 
@@ -32,12 +33,19 @@ export default async function HonorariosPage() {
     .from("honorarios")
     .select(
       `id, monto, created_at,
-       registros_uso(precio_cobrado, pacientes(nombre), tipos_procedimiento(nombre))`,
+       registros_uso(precio_cobrado, pacientes(nombre), tipos_procedimiento(nombre), doctoras(nombre))`,
     )
     .order("created_at", { ascending: false })
     .returns<Fila[]>();
 
   const total = honorarios?.reduce((acc, h) => acc + h.monto, 0) ?? 0;
+
+  const porDoctora = new Map<string, number>();
+  for (const h of honorarios ?? []) {
+    const nombre = h.registros_uso?.doctoras?.nombre ?? "Sin doctora asignada";
+    porDoctora.set(nombre, (porDoctora.get(nombre) ?? 0) + h.monto);
+  }
+  const totalesPorDoctora = [...porDoctora.entries()].sort((a, b) => b[1] - a[1]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -47,6 +55,20 @@ export default async function HonorariosPage() {
         <p className="text-muted text-sm">Total acumulado</p>
         <p className="font-display text-3xl text-default num">{formatCOP(total)}</p>
       </div>
+
+      {totalesPorDoctora.length > 0 && (
+        <div className="card">
+          <p className="font-display text-lg text-default mb-2">Por doctora</p>
+          <div className="flex flex-col gap-2">
+            {totalesPorDoctora.map(([nombre, monto]) => (
+              <div key={nombre} className="flex items-center justify-between">
+                <span className="text-default text-sm">{nombre}</span>
+                <span className="num text-default font-semibold">{formatCOP(monto)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {honorarios && honorarios.length === 0 && (
         <div className="empty-state">
@@ -65,7 +87,10 @@ export default async function HonorariosPage() {
                 {h.registros_uso?.pacientes?.nombre ?? "Paciente"} —{" "}
                 {h.registros_uso?.tipos_procedimiento?.nombre ?? "Procedimiento"}
               </span>
-              <span className="list-row-meta">{formatFechaCO(h.created_at)}</span>
+              <span className="list-row-meta">
+                {formatFechaCO(h.created_at)}
+                {h.registros_uso?.doctoras?.nombre ? ` · ${h.registros_uso.doctoras.nombre}` : ""}
+              </span>
             </div>
             <span className="num text-default font-semibold">{formatCOP(h.monto)}</span>
           </div>
