@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getPerfilActual } from "@/lib/data/perfil";
+import { formatCOP } from "@/lib/format";
 import { CostoInsumo } from "../costo-insumo";
 import { StockInsumo } from "../stock-insumo";
 
@@ -62,7 +63,7 @@ export default async function DetalleInsumoPage({
             {usado} {insumo.unidad_medida}
           </span>
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-1">
           <span className="text-muted text-sm">Queda disponible</span>
           <StockInsumo
             insumoId={insumo.id}
@@ -101,13 +102,13 @@ export default async function DetalleInsumoPage({
               <div className="flex items-center justify-between mt-2">
                 <span className="text-muted text-sm">Invertido originalmente</span>
                 <span className="num text-default font-semibold">
-                  ${(costoUnitario * insumo.stock_inicial).toLocaleString("es-MX")}
+                  {formatCOP(costoUnitario * insumo.stock_inicial)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-muted text-sm">Valor de lo que queda</span>
                 <span className="num text-default font-semibold">
-                  ${(costoUnitario * insumo.stock).toLocaleString("es-MX")}
+                  {formatCOP(costoUnitario * insumo.stock)}
                 </span>
               </div>
             </>

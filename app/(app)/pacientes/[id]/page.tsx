@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Plus } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getPerfilActual } from "@/lib/data/perfil";
+import { formatCOP, formatFechaCO } from "@/lib/format";
 import { EliminarRegistroBoton } from "./eliminar-boton";
 
 type RegistroFila = {
@@ -87,17 +88,13 @@ export default async function DetallePacientePage({
                   {r.tipos_procedimiento?.nombre ?? "Procedimiento"}
                 </p>
                 <p className="text-muted text-sm">
-                  {new Date(r.created_at).toLocaleDateString("es-MX", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
+                  {formatFechaCO(r.created_at)}
                   {r.doctoras?.nombre ? ` · ${r.doctoras.nombre}` : ""}
                 </p>
               </div>
               <div className="flex items-center gap-3">
                 <span className="num font-semibold text-default">
-                  ${r.precio_cobrado.toLocaleString("es-MX")}
+                  {formatCOP(r.precio_cobrado)}
                 </span>
                 <EliminarRegistroBoton registroId={r.id} pacienteId={id} />
               </div>
@@ -114,7 +111,7 @@ export default async function DetallePacientePage({
 
             {perfil?.role === "dueno" && r.honorarios && (
               <p className="text-muted text-sm mt-1">
-                Honorario: <span className="num">${r.honorarios.monto.toLocaleString("es-MX")}</span>
+                Honorario: <span className="num">{formatCOP(r.honorarios.monto)}</span>
               </p>
             )}
           </div>

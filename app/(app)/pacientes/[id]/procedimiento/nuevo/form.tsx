@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, X } from "lucide-react";
 import { registrarProcedimiento } from "./actions";
+import { formatCOP } from "@/lib/format";
 
 type TipoProcedimiento = { id: string; nombre: string; codigo: string | null; precio: number };
 type Insumo = { id: string; nombre: string; unidad_medida: string; stock: number };
@@ -93,7 +94,7 @@ export function AsignarProcedimientoForm({
           {tiposProcedimiento.map((t) => (
             <option key={t.id} value={t.id}>
               {t.nombre}
-              {t.codigo ? ` (${t.codigo})` : ""} — ${t.precio.toLocaleString("es-MX")}
+              {t.codigo ? ` (${t.codigo})` : ""} — {formatCOP(t.precio)}
             </option>
           ))}
         </select>

@@ -1,6 +1,7 @@
 import { Stethoscope } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getPerfilActual } from "@/lib/data/perfil";
+import { formatCOP } from "@/lib/format";
 import { NuevoProcedimientoForm } from "./nuevo-procedimiento-form";
 
 export default async function ProcedimientosPage() {
@@ -64,14 +65,10 @@ export default async function ProcedimientosPage() {
                   {t.codigo && <span className="text-muted"> · {t.codigo}</span>}
                 </span>
                 {honorario !== undefined && (
-                  <span className="list-row-meta">
-                    Honorario: ${honorario.toLocaleString("es-MX")}
-                  </span>
+                  <span className="list-row-meta">Honorario: {formatCOP(honorario)}</span>
                 )}
               </div>
-              <span className="num text-default font-semibold">
-                ${t.precio.toLocaleString("es-MX")}
-              </span>
+              <span className="num text-default font-semibold">{formatCOP(t.precio)}</span>
             </div>
           );
         })}

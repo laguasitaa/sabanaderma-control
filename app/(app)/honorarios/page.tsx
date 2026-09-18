@@ -1,5 +1,6 @@
 import { getPerfilActual } from "@/lib/data/perfil";
 import { createClient } from "@/lib/supabase/server";
+import { formatCOP, formatFechaCO } from "@/lib/format";
 
 type Fila = {
   id: string;
@@ -44,9 +45,7 @@ export default async function HonorariosPage() {
 
       <div className="card w-fit">
         <p className="text-muted text-sm">Total acumulado</p>
-        <p className="font-display text-3xl text-default num">
-          ${total.toLocaleString("es-MX")}
-        </p>
+        <p className="font-display text-3xl text-default num">{formatCOP(total)}</p>
       </div>
 
       {honorarios && honorarios.length === 0 && (
@@ -66,17 +65,9 @@ export default async function HonorariosPage() {
                 {h.registros_uso?.pacientes?.nombre ?? "Paciente"} —{" "}
                 {h.registros_uso?.tipos_procedimiento?.nombre ?? "Procedimiento"}
               </span>
-              <span className="list-row-meta">
-                {new Date(h.created_at).toLocaleDateString("es-MX", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
-              </span>
+              <span className="list-row-meta">{formatFechaCO(h.created_at)}</span>
             </div>
-            <span className="num text-default font-semibold">
-              ${h.monto.toLocaleString("es-MX")}
-            </span>
+            <span className="num text-default font-semibold">{formatCOP(h.monto)}</span>
           </div>
         ))}
       </div>
