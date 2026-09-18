@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getPerfilActual } from "@/lib/data/perfil";
 import { CostoInsumo } from "../costo-insumo";
+import { StockInsumo } from "../stock-insumo";
 
 export default async function DetalleInsumoPage({
   params,
@@ -63,9 +64,11 @@ export default async function DetalleInsumoPage({
         </div>
         <div className="flex items-center justify-between">
           <span className="text-muted text-sm">Queda disponible</span>
-          <span className="num text-default font-semibold">
-            {insumo.stock} {insumo.unidad_medida}
-          </span>
+          <StockInsumo
+            insumoId={insumo.id}
+            unidadMedida={insumo.unidad_medida}
+            stockActual={insumo.stock}
+          />
         </div>
 
         <div

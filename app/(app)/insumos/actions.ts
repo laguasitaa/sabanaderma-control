@@ -42,3 +42,30 @@ export async function actualizarCostoInsumo(insumoId: string, costoUnitario: num
   if (error) throw new Error(error.message);
   revalidatePath("/insumos");
 }
+
+export async function actualizarStockInsumo(insumoId: string, nuevoStock: number) {
+  const supabase = await createClient();
+
+  const { data: insumo, error: errorLectura } = await supabase
+    .from("insumos")
+    .select("stock_inicial")
+    .eq("id", insumoId)
+    .single();
+
+  if (errorLectura) throw new Error(errorLectura.message);
+
+  // Si todavía no se había capturado un stock original real (quedó en 0 al
+  // cargar el catálogo), esta primera captura ES el original. Si ya tenía
+  // historial, es solo una corrección del disponible — el original no se
+  // toca.
+  const actualizacion =
+    insumo.stock_inicial === 0
+      ? { stock: nuevoStock, stock_inicial: nuevoStock }
+      : { stock: nuevoStock };
+
+  const { error } = await supabase.from("insumos").update(actualizacion).eq("id", insumoId);
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/insumos");
+  revalidatePath(`/insumos/${insumoId}`);
+}
