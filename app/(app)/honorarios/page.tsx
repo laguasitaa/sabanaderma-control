@@ -1,3 +1,4 @@
+import { Download } from "lucide-react";
 import { getPerfilActual } from "@/lib/data/perfil";
 import { createClient } from "@/lib/supabase/server";
 import { formatCOP, formatFechaCO } from "@/lib/format";
@@ -14,6 +15,8 @@ type Fila = {
   } | null;
 };
 
+const MOSTRAR_EN_PANTALLA = 100;
+
 export default async function HonorariosPage() {
   const perfil = await getPerfilActual();
 
@@ -29,30 +32,52 @@ export default async function HonorariosPage() {
   }
 
   const supabase = await createClient();
-  const { data: honorarios } = await supabase
-    .from("honorarios")
-    .select(
-      `id, monto, created_at,
-       registros_uso(precio_cobrado, pacientes(nombre), tipos_procedimiento(nombre), doctoras(nombre))`,
-    )
-    .order("created_at", { ascending: false })
-    .returns<Fila[]>();
 
-  const total = honorarios?.reduce((acc, h) => acc + h.monto, 0) ?? 0;
+  // Supabase/PostgREST devuelve máximo 1000 filas por consulta — con miles
+  // de honorarios históricos, el total mostrado quedaba mal si no se
+  // paginaba. Se traen todas las filas para los totales; en pantalla solo
+  // se listan las más recientes (para eso está el botón de descarga).
+  const TAMANO_PAGINA = 1000;
+  const honorarios: Fila[] = [];
+  for (let desde = 0; ; desde += TAMANO_PAGINA) {
+    const { data, error } = await supabase
+      .from("honorarios")
+      .select(
+        `id, monto, created_at,
+         registros_uso(precio_cobrado, pacientes(nombre), tipos_procedimiento(nombre), doctoras(nombre))`,
+      )
+      .order("created_at", { ascending: false })
+      .range(desde, desde + TAMANO_PAGINA - 1)
+      .returns<Fila[]>();
+
+    if (error) break;
+    honorarios.push(...data);
+    if (data.length < TAMANO_PAGINA) break;
+  }
+
+  const total = honorarios.reduce((acc, h) => acc + h.monto, 0);
 
   const porDoctora = new Map<string, number>();
-  for (const h of honorarios ?? []) {
+  for (const h of honorarios) {
     const nombre = h.registros_uso?.doctoras?.nombre ?? "Sin doctora asignada";
     porDoctora.set(nombre, (porDoctora.get(nombre) ?? 0) + h.monto);
   }
   const totalesPorDoctora = [...porDoctora.entries()].sort((a, b) => b[1] - a[1]);
 
+  const recientes = honorarios.slice(0, MOSTRAR_EN_PANTALLA);
+
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="font-display text-2xl text-default">Honorarios</h1>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="font-display text-2xl text-default">Honorarios</h1>
+        <a href="/honorarios/exportar" className="btn-secondary">
+          <Download size={18} strokeWidth={1.75} aria-hidden="true" />
+          Descargar para contaduría
+        </a>
+      </div>
 
       <div className="card w-fit">
-        <p className="text-muted text-sm">Total acumulado</p>
+        <p className="text-muted text-sm">Total acumulado ({honorarios.length} registros)</p>
         <p className="font-display text-3xl text-default num">{formatCOP(total)}</p>
       </div>
 
@@ -70,7 +95,7 @@ export default async function HonorariosPage() {
         </div>
       )}
 
-      {honorarios && honorarios.length === 0 && (
+      {honorarios.length === 0 && (
         <div className="empty-state">
           <p className="font-display text-lg text-default">Sin honorarios todavía</p>
           <p className="text-muted text-sm mt-1">
@@ -79,8 +104,15 @@ export default async function HonorariosPage() {
         </div>
       )}
 
+      {honorarios.length > MOSTRAR_EN_PANTALLA && (
+        <p className="text-muted text-sm">
+          Mostrando los {MOSTRAR_EN_PANTALLA} más recientes de {honorarios.length}. Para ver todos,
+          descarga el archivo para contaduría.
+        </p>
+      )}
+
       <div className="flex flex-col gap-2">
-        {honorarios?.map((h) => (
+        {recientes.map((h) => (
           <div key={h.id} className="list-row">
             <div className="list-row-main">
               <span className="list-row-title">
