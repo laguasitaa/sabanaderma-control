@@ -1,37 +1,47 @@
-# DESIGN.md — tema base "fresca" (Fresca / juguetona)
+# DESIGN.md — tema "sabana" (marca real de SabanaDerma)
 
-> Punto de partida generado por raicode. No es identidad final: si el usuario
-> corre su branding, este archivo se reemplaza completo.
+> Reemplaza el tema base genérico de raicode. Colores y tipografía extraídos
+> directamente de sabanaderma.com (dorado + Barlow Condensed + Raleway).
+> Spacing, radii, sombras, motion y componentes se conservan del sistema base
+> — son los huesos, no la piel.
 
 ## Dirección estética
-fresco · juguetón · con energía · directo. Tu app arrancó con el tema Fresco: azul eléctrico, letras redonditas y mucho aire. Se siente ligero y con energía. Cámbialo cuando quieras.
-Densidad media, mucho aire, jerarquía por tamaño y peso — no por color.
+Cálido · profesional · confiable. El dorado de la marca (`#D5A652`) es el
+acento — el mismo tono del logo y de los botones del sitio de la clínica.
+Fondo cálido casi blanco, texto oscuro cálido (no negro puro ni azulado).
+Densidad media, jerarquía por tamaño y peso — el color se reserva para
+acciones e interacción, no para decorar.
 
-## Color (CSS custom properties, ver theme-tokens.css)
-Un solo acento protagonista + neutros + semánticos. Nunca inventar colores nuevos.
+## Color (CSS custom properties, ver globals.css → `[data-theme="sabana"]`)
 
 | rol | claro | oscuro |
 | --- | --- | --- |
-| bg | `#F4F8FF` | `#0D1424` |
-| surface | `#FFFFFF` | `#16203A` |
-| border | `#D8E3F7` | `#26314F` |
-| text | `#14213D` | `#E8EEFB` |
-| text-muted | `#5A6B8C` | `#9AA9C6` |
-| accent / hover / on | `#1B62F0` / `#0E4CC7` / `#FFFFFF` | `#79A6FF` / `#9CBEFF` / `#06122B` |
-| success / bg | `#12855F` / `#DFF5EC` | `#57D6A6` / `#0F2E26` |
-| warning / bg | `#8E6008` / `#FDF0D8` | `#E8BE5E` / `#2E260F` |
-| error / bg | `#CF3535` / `#FDE8E8` | `#FF8A80` / `#351616` |
+| bg | `#FBF8F2` | `#1C1712` |
+| surface | `#FFFFFF` | `#26201A` |
+| border | `#E8DEC8` | `#3A2F24` |
+| text | `#2B2620` | `#F2EAD9` |
+| text-muted | `#7A7065` | `#B8A990` |
+| accent / hover / on | `#D5A652` / `#B8863A` / `#2B2620` | `#E8C989` / `#F2D9A8` / `#241C10` |
+| success / bg | `#2F7A5A` / `#E6F2EC` | `#6FCFA3` / `#17332A` |
+| warning / bg | `#9A6B12` / `#FBF0DC` | `#E0B457` / `#33290F` |
+| error / bg | `#B03A2B` / `#FBE9E5` | `#F08876` / `#3A1B16` |
+| info / bg | `#2F6E96` / `#E6EEF2` | `#8FC4E4` / `#2E3235` |
 
-Todos los pares texto/fondo cumplen WCAG AA (>=4.5:1 en texto normal).
+**Nota de accesibilidad — texto sobre el dorado:** el dorado (`#D5A652`) no
+cumple contraste 4.5:1 con texto blanco ni con fondo blanco como color de
+texto — por eso `--c-on-accent` es oscuro (`#2B2620`), igual que el propio
+sitio de la clínica usa texto negro sobre sus botones dorados. Nunca poner
+texto blanco sobre `--c-accent`.
+
 Usar `--c-*` vía las utilidades (`bg-app`, `text-muted`, `btn-primary`…), no hex sueltos.
 
 ## Tipografía (next/font/google)
-- Display: **Baloo 2** 700 — títulos, nombre de app, números grandes.
-- Body: **Nunito** 400/600 — todo lo demás.
+- Display: **Barlow Condensed** 600 — títulos, nombre de app, números grandes. Es la fuente que usa sabanaderma.com en sus encabezados.
+- Body: **Raleway** 400/600 — todo lo demás. Es la fuente que usa el sitio en botones y textos de marca.
 - Escala: 12 / 13.5 / 15 / 19 / 27 / 38 px. Line-height 1.15 en títulos, 1.55 en texto.
 
 ```ts
-import { Baloo_2, Nunito } from "next/font/google";
+import { Barlow_Condensed, Raleway } from "next/font/google";
 ```
 
 ## Spacing, radii, sombras, motion
@@ -52,10 +62,10 @@ Serie principal `--c-series-1`; 2-4 son tonos de la misma familia. Máximo 4 ser
 
 | serie | claro | oscuro |
 | --- | --- | --- |
-| 1 | `#1B62F0` | `#79A6FF` |
-| 2 | `#5B8DF7` | `#4E7FDD` |
-| 3 | `#9CB8FB` | `#ADC7FF` |
-| 4 | `#123F9B` | `#2E5AA8` |
+| 1 | `#D5A652` | `#E8C989` |
+| 2 | `#B8863A` | `#D5A652` |
+| 3 | `#E8C989` | `#F2D9A8` |
+| 4 | `#8A6526` | `#B8863A` |
 
 Permitido: barras, líneas, área simple, dona de máximo 4 rebanadas. Grid solo horizontal en `--c-border`.
 Prohibido: 3D, arcoíris, doble eje Y, gradientes en las series.
@@ -105,20 +115,25 @@ Decorativo (prohibido): acompaña un título o rellena espacio. **Prueba**: si a
 
 ## Tokens nuevos de esta variante
 
-El acento ya es azul, así que info se deriva de él en vez de meter un color nuevo al sistema.
+El dorado ya funciona como acento de marca — usarlo también para "info" se
+leería como una alerta o botón de acción, así que info va en un azul apagado
+propio, sin relación con la marca (es un color puramente funcional).
 
 | rol | claro | oscuro |
 | --- | --- | --- |
-| `--c-info` | `#1B62F0` | `#79A6FF` |
-| `--c-info-bg` | `#E4ECFD` | `#1E2B47` |
-| `--c-on-info-bg` | `#1A60EB` | `#79A6FF` |
-| `--c-overlay` | `rgba(12,10,8,0.45)` | `rgba(0,0,0,0.7)` |
-| `--c-avatar-1` | `#D6E3FC` | `#364B79` |
-| `--c-avatar-2` | `#E1EAFE` | `#283E6E` |
-| `--c-avatar-3` | `#EDF2FE` | `#465579` |
-| `--c-avatar-4` | `#D4DCED` | `#1E335D` |
+| `--c-info` | `#2F6E96` | `#8FC4E4` |
+| `--c-info-bg` | `#E6EEF2` | `#2E3235` |
+| `--c-on-info-bg` | `#2F6E96` | `#8FC4E4` |
+| `--c-overlay` | `rgba(20,16,10,0.45)` | `rgba(0,0,0,0.7)` |
+| `--c-avatar-1` | `#F2E6C9` | `#5A4A2A` |
+| `--c-avatar-2` | `#F7EEDA` | `#4F4023` |
+| `--c-avatar-3` | `#FBF5E9` | `#453A20` |
+| `--c-avatar-4` | `#ECE0C4` | `#6A5730` |
 
-Todos medidos: el par de texto más bajo de v1.1 es 4.52:1.
+Contraste verificado: texto sobre `--c-accent` usa `--c-on-accent` (oscuro),
+no blanco — el dorado es demasiado claro para texto blanco legible (ver nota
+de accesibilidad arriba). El resto de pares texto/fondo cumple WCAG AA
+(>=4.5:1 en texto normal).
 
 ## Anti-patterns v1.1
 

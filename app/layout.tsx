@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { Baloo_2, Nunito } from "next/font/google";
+import { Barlow_Condensed, Raleway } from "next/font/google";
 import "./globals.css";
 
-const display = Baloo_2({
+const display = Barlow_Condensed({
   subsets: ["latin"],
-  weight: ["500", "700", "800"],
+  weight: ["500", "600", "700"],
   variable: "--font-display",
   display: "swap",
 });
 
-const body = Nunito({
+const body = Raleway({
   subsets: ["latin"],
   weight: ["400", "600", "700"],
   variable: "--font-body",
@@ -25,7 +25,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es"
-      data-theme="fresca"
+      data-theme="sabana"
       className={`${display.variable} ${body.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>

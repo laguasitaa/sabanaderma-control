@@ -59,6 +59,61 @@
   :root { --motion-duration: 0ms; }
 }
 
+/* SabanaDerma — marca real de la clínica, extraída de sabanaderma.com */
+[data-theme="sabana"] {
+  --c-series-1: #D5A652;
+  --c-series-2: #B8863A;
+  --c-series-3: #E8C989;
+  --c-series-4: #8A6526;
+  --c-bg: #FBF8F2;
+  --c-surface: #FFFFFF;
+  --c-border: #E8DEC8;
+  --c-text: #2B2620;
+  --c-text-muted: #7A7065;
+  --c-accent: #D5A652;
+  --c-accent-hover: #B8863A;
+  --c-on-accent: #2B2620;
+  --c-accent-ring: rgba(213,166,82,0.28);
+  --c-success: #2F7A5A;
+  --c-success-bg: #E6F2EC;
+  --c-on-success-bg: #1E5C41;
+  --c-warning: #9A6B12;
+  --c-warning-bg: #FBF0DC;
+  --c-on-warning-bg: #6E4B08;
+  --c-error: #B03A2B;
+  --c-error-bg: #FBE9E5;
+  --c-on-error-bg: #86281C;
+  --font-display: "Barlow Condensed", sans-serif;
+  --font-body: "Raleway", sans-serif;
+  --weight-display: 600;
+}
+[data-theme="sabana"].dark, [data-theme="sabana"][data-mode="dark"] {
+  --c-series-1: #E8C989;
+  --c-series-2: #D5A652;
+  --c-series-3: #F2D9A8;
+  --c-series-4: #B8863A;
+  --c-bg: #1C1712;
+  --c-surface: #26201A;
+  --c-border: #3A2F24;
+  --c-text: #F2EAD9;
+  --c-text-muted: #B8A990;
+  --c-accent: #E8C989;
+  --c-accent-hover: #F2D9A8;
+  --c-on-accent: #241C10;
+  --c-accent-ring: rgba(232,201,137,0.28);
+  --c-success: #6FCFA3;
+  --c-success-bg: #17332A;
+  --c-on-success-bg: #A8E6C8;
+  --c-warning: #E0B457;
+  --c-warning-bg: #33290F;
+  --c-on-warning-bg: #F0D592;
+  --c-error: #F08876;
+  --c-error-bg: #3A1B16;
+  --c-on-error-bg: #F8B6A9;
+  --shadow-1: 0 1px 2px rgba(0,0,0,0.5);
+  --shadow-2: 0 4px 14px rgba(0,0,0,0.55);
+}
+
 /* Cálida / personal */
 [data-theme="calida"] {
   --c-series-1: #B4552F;
@@ -451,6 +506,29 @@
    ============================================================ */
 
 /* --- tokens nuevos por variante (8 por modo) --- */
+
+/* SabanaDerma — el dorado ya funciona como acento de marca; info va en un azul
+   apagado propio, porque el dorado se lee como estado/aviso, no como dato neutro. */
+[data-theme="sabana"] {
+  --c-info: #2F6E96;
+  --c-info-bg: #E6EEF2;
+  --c-on-info-bg: #2F6E96;
+  --c-overlay: rgba(20,16,10,0.45);
+  --c-avatar-1: #F2E6C9;
+  --c-avatar-2: #F7EEDA;
+  --c-avatar-3: #FBF5E9;
+  --c-avatar-4: #ECE0C4;
+}
+[data-theme="sabana"].dark, [data-theme="sabana"][data-mode="dark"] {
+  --c-info: #8FC4E4;
+  --c-info-bg: #2E3235;
+  --c-on-info-bg: #8FC4E4;
+  --c-overlay: rgba(0,0,0,0.7);
+  --c-avatar-1: #5A4A2A;
+  --c-avatar-2: #4F4023;
+  --c-avatar-3: #453A20;
+  --c-avatar-4: #6A5730;
+}
 
 /* Cálida / personal — Azul polvoso: el único color que no sale del acento, porque “info” en barro se leería como aviso. */
 [data-theme="calida"] {
