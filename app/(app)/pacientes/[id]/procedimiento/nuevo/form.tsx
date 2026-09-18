@@ -7,6 +7,7 @@ import { registrarProcedimiento } from "./actions";
 
 type TipoProcedimiento = { id: string; nombre: string; precio: number };
 type Insumo = { id: string; nombre: string; unidad_medida: string; stock: number };
+type Doctora = { id: string; nombre: string };
 
 type FilaInsumo = { insumo_id: string; cantidad: string };
 
@@ -14,14 +15,17 @@ export function AsignarProcedimientoForm({
   pacienteId,
   tiposProcedimiento,
   insumosDisponibles,
+  doctoras,
 }: {
   pacienteId: string;
   tiposProcedimiento: TipoProcedimiento[];
   insumosDisponibles: Insumo[];
+  doctoras: Doctora[];
 }) {
   const router = useRouter();
   const [tipoId, setTipoId] = useState(tiposProcedimiento[0]?.id ?? "");
   const [precio, setPrecio] = useState(String(tiposProcedimiento[0]?.precio ?? ""));
+  const [doctoraId, setDoctoraId] = useState(doctoras[0]?.id ?? "");
   const [filas, setFilas] = useState<FilaInsumo[]>([]);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -54,7 +58,13 @@ export function AsignarProcedimientoForm({
 
     setCargando(true);
     try {
-      await registrarProcedimiento(pacienteId, tipoId, Number(precio), insumosUsados);
+      await registrarProcedimiento(
+        pacienteId,
+        tipoId,
+        Number(precio),
+        insumosUsados,
+        doctoraId || null,
+      );
       router.push(`/pacientes/${pacienteId}`);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "";
@@ -83,6 +93,25 @@ export function AsignarProcedimientoForm({
           {tiposProcedimiento.map((t) => (
             <option key={t.id} value={t.id}>
               {t.nombre}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label className="label-default block mb-1" htmlFor="doctora">
+          Doctora
+        </label>
+        <select
+          id="doctora"
+          className="input-default w-full"
+          value={doctoraId}
+          onChange={(e) => setDoctoraId(e.target.value)}
+        >
+          {doctoras.length === 0 && <option value="">Sin doctoras registradas</option>}
+          {doctoras.map((d) => (
+            <option key={d.id} value={d.id}>
+              {d.nombre}
             </option>
           ))}
         </select>

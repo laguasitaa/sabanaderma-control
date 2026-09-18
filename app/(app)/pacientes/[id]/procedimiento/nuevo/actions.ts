@@ -10,6 +10,7 @@ export async function registrarProcedimiento(
   tipoProcedimientoId: string,
   precioCobrado: number,
   insumos: InsumoUsado[],
+  doctoraId: string | null,
 ) {
   const supabase = await createClient();
   const { error } = await supabase.rpc("registrar_procedimiento", {
@@ -17,6 +18,7 @@ export async function registrarProcedimiento(
     p_tipo_procedimiento_id: tipoProcedimientoId,
     p_precio_cobrado: precioCobrado,
     p_insumos: insumos,
+    p_doctora_id: doctoraId,
   });
 
   if (error) throw new Error(error.message);

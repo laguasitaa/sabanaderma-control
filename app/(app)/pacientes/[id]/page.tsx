@@ -10,6 +10,7 @@ type RegistroFila = {
   precio_cobrado: number;
   created_at: string;
   tipos_procedimiento: { nombre: string } | null;
+  doctoras: { nombre: string } | null;
   registros_uso_insumos: { cantidad: number; insumos: { nombre: string; unidad_medida: string } | null }[];
   honorarios: { monto: number } | null;
 };
@@ -36,6 +37,7 @@ export default async function DetallePacientePage({
     .select(
       `id, precio_cobrado, created_at,
        tipos_procedimiento(nombre),
+       doctoras(nombre),
        registros_uso_insumos(cantidad, insumos(nombre, unidad_medida)),
        honorarios(monto)`,
     )
@@ -90,6 +92,7 @@ export default async function DetallePacientePage({
                     month: "long",
                     year: "numeric",
                   })}
+                  {r.doctoras?.nombre ? ` · ${r.doctoras.nombre}` : ""}
                 </p>
               </div>
               <div className="flex items-center gap-3">

@@ -28,6 +28,12 @@ export default async function NuevoProcedimientoPage({
     .select("id, nombre, unidad_medida, stock")
     .order("nombre");
 
+  const { data: doctoras } = await supabase
+    .from("doctoras")
+    .select("id, nombre")
+    .eq("activa", true)
+    .order("nombre");
+
   return (
     <div className="max-w-lg flex flex-col gap-4">
       <div>
@@ -50,6 +56,7 @@ export default async function NuevoProcedimientoPage({
           pacienteId={paciente.id}
           tiposProcedimiento={tiposProcedimiento}
           insumosDisponibles={insumos ?? []}
+          doctoras={doctoras ?? []}
         />
       )}
     </div>
